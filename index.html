@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GIPER X🚀</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: black;
+      font-family: 'Courier New', Courier, monospace;
+      color: #00BFFF;
+    }
+
+    #splashScreen {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+    }
+
+    #logo {
+      width: 50px;
+      opacity: 0;
+      transition: all 8s ease-in-out;
+      position: absolute;
+    }
+
+    #progressBarContainer {
+      position: absolute;
+      bottom: 30px;
+      left: 10px;
+      right: 10px;
+      height: 6px;
+      background: white;
+      border-radius: 4px;
+    }
+
+    #progressBar {
+      width: 0%;
+      height: 100%;
+      background: lime;
+      transition: width 8s linear;
+      border-radius: 4px;
+    }
+
+    #loginModal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: black;
+      z-index: 20000;
+      display: none;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .login-box {
+      border: 2px solid white;
+      padding: 40px;
+      background: black;
+      text-align: center;
+      border-radius: 10px;
+      box-shadow: 0 0 20px white;
+    }
+
+    .login-box input {
+      width: 250px;
+      padding: 12px;
+      margin-bottom: 20px;
+      border: 1px solid #00BFFF;
+      background: #000;
+      color: #00BFFF;
+      border-radius: 5px;
+      text-align: center;
+    }
+
+    .login-box button {
+      padding: 10px 20px;
+      background: #00BFFF;
+      color: black;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .matrix, .circle-wrapper, h1 {
+      display: none;
+    }
+
+    .matrix.active,
+    .circle-wrapper.active,
+    h1.active {
+      display: block;
+    }
+
+    .matrix {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+
+    canvas {
+      display: block;
+    }
+
+    h1 {
+      position: absolute;
+      top: 20px;
+      width: 100%;
+      text-align: center;
+      font-size: 48px;
+      font-weight: bold;
+      color: #00BFFF;
+      text-shadow: 0 0 10px #00BFFF, 0 0 20px #00BFFF;
+      z-index: 2;
+    }
+
+    .circle-wrapper {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 260px;
+      height: 260px;
+      z-index: 2;
+    }
+
+    .glow-circle {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, #00ff99, #00bfff, #00ff99);
+      animation: spin 0.4s linear infinite;
+      box-shadow: 0 0 15px #00bfff, 0 0 30px #00bfff, 0 0 60px #00bfff;
+      position: absolute;
+      z-index: 1;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .center-number {
+      width: 80%;
+      height: 80%;
+      top: 10%;
+      left: 10%;
+      position: absolute;
+      border-radius: 50%;
+      background-color: #000022;
+      color: white;
+      font-size: 48px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-shadow: 0 0 10px #00BFFF;
+      z-index: 3;
+      user-select: none;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+<!-- SPLASH SCREEN -->
+<div id="splashScreen">
+  <img id="logo" src="logo.png" />
+  <div id="progressBarContainer">
+    <div id="progressBar"></div>
+  </div>
+</div>
+
+<!-- LOGIN PANEL -->
+<div id="loginModal">
+  <div class="login-box">
+    <input type="text" id="keyInput" placeholder="Enter Key">
+    <br />
+    <button onclick="validateKey()">Login</button>
+  </div>
+</div>
+
+<!-- MATRIX BACKGROUND -->
+<div class="matrix" id="matrixContainer">
+  <canvas id="matrixCanvas"></canvas>
+</div>
+
+<h1 id="title">GIPER X</h1>
+
+<!-- AYLANA -->
+<div class="circle-wrapper" id="circleWrapper">
+  <div class="glow-circle"></div>
+  <div class="center-number" id="number">0.00</div>
+</div>
+
+<script>
+  // Splash Screen
+  window.addEventListener("load", () => {
+    const logo = document.getElementById("logo");
+    const bar = document.getElementById("progressBar");
+
+    setTimeout(() => {
+      logo.style.opacity = "1";
+      logo.style.width = "160px";
+      bar.style.width = "100%";
+    }, 100);
+
+    setTimeout(() => {
+      document.getElementById("splashScreen").style.display = "none";
+      document.getElementById("loginModal").style.display = "flex";
+    }, 8100);
+  });
+
+  const validKeys = [
+    "79A7D-8559A-ED5C2-69A48",
+    "51B7C-83A2E-AD44F-91DC3",
+    "C9D4F-19F0B-6A84C-50A77"
+  ];
+
+  function validateKey() {
+    const key = document.getElementById("keyInput").value.trim();
+    if (validKeys.includes(key)) {
+      document.getElementById("loginModal").style.display = "none";
+      // Show main UI
+      document.getElementById("matrixContainer").classList.add("active");
+      document.getElementById("circleWrapper").classList.add("active");
+      document.getElementById("title").classList.add("active");
+      startRandomNumberLoop(); // now we start updating numbers
+    } else {
+      alert("❌ Noto‘g‘ri kalit!");
+    }
+  }
+
+  // MATRIX EFFECT
+  const canvas = document.getElementById("matrixCanvas");
+  const ctx = canvas.getContext("2d");
+  canvas.height = window.innerHeight;
+  canvas.width = window.innerWidth;
+  const letters = "X X X X X X X".split(" ");
+  const fontSize = 14;
+  let columns = Math.floor(canvas.width / fontSize);
+  let drops = Array(columns).fill(1);
+
+  function drawMatrix() {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#00BFFF";
+    ctx.font = fontSize + "px monospace";
+    for (let i = 0; i < drops.length; i++) {
+      const text = letters[Math.floor(Math.random() * letters.length)];
+      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+        drops[i] = 0;
+      }
+      drops[i]++;
+    }
+  }
+
+  setInterval(drawMatrix, 50);
+
+  window.addEventListener("resize", () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    columns = Math.floor(canvas.width / fontSize);
+    drops = Array(columns).fill(1);
+  });
+
+  // RANDOM NUMBER LOGIC
+  const numberDiv = document.getElementById("number");
+
+  function generateRandomNumber() {
+    const whole = Math.floor(Math.random() * 25) + 1;
+    const decimal = Math.floor(Math.random() * 100);
+    return `${whole}.${decimal.toString().padStart(2, "0")}`;
+  }
+
+  function startRandomNumberLoop() {
+    let isFirst = true;
+
+    function updateNumber() {
+      const value = generateRandomNumber();
+      numberDiv.innerText = value;
+
+      const delay = isFirst ? 10000 : 50000;
+      isFirst = false;
+
+      setTimeout(updateNumber, delay);
+    }
+
+    updateNumber();
+  }
+</script>
+
+</body>
+</html>
